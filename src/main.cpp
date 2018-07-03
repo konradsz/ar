@@ -7,32 +7,36 @@
 int main() {
     cv::VideoCapture capture = cv::VideoCapture(0);
     if (!capture.isOpened()) {
-        std::cout << "Cannot use camera" << std::endl;
+        std::cout << "Cannot use the camera" << std::endl;
         return -1;
     }
 
     cv::namedWindow("ar", cv::WINDOW_AUTOSIZE);
 
     while (true) {
+        // capture the image from camera
         cv::Mat image;
-        cv::Mat flipped_image;
         capture >> image;
+
+        // flip the image
+        cv::Mat flipped_image;
         cv::flip(image, flipped_image, 1);
+
+        // convert to grey scale
+        cv::Mat gray_image;
+        cv::cvtColor(flipped_image, gray_image, cv::COLOR_BGR2GRAY);
+
+        cv::Size pattern_size(9, 6);
+        std::vector<cv::Point2f> centers;
+        //cv::resize(gray_image, gray_image, cv::Size(320, 240));
+        bool found = cv::findChessboardCorners(gray_image, pattern_size, centers);
+        cv::drawChessboardCorners(flipped_image, pattern_size, cv::Mat(centers), found);
+
         cv::imshow("ar", flipped_image);
-        if (cv::waitKey(30) == 27) {
+        if (cv::waitKey(1) == 27) {
             break;
         }
     }
 
-    /*cv::Size patternsize(9, 6); // number of centers
-    std::vector<cv::Point2f> centers;
-
-    // bool patternfound = findChessboardCorners(frame, patternsize, centers);
-    bool found = cv::findChessboardCorners(image, patternsize, centers);
-    if (found)
-      std::cout << "found!" << std::endl;
-    else
-      std::cout << "not found!" << std::endl;
-    cv::drawChessboardCorners(image2, patternsize, cv::Mat(centers), found);*/
     return 0;
 }
