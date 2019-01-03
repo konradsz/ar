@@ -1,2 +1,2 @@
-# ar
-Augmented reality using OpenCV and OpenGL
+# camcal
+Camera calibration in OpenCV
